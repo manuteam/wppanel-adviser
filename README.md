@@ -1,4 +1,4 @@
-# wppanel adviser
+# WordPress Panel Adviser
 
 ![admin-demo-preview](https://75.wp.manu.team/wp-content/uploads/2021/08/wp-admin-adviser-preview.png)
 
