@@ -22,3 +22,18 @@ Example of setup.json:
 "manual_link": "https://domanin.com/manuals/"
 }
 ```
+
+Example of manual-content.json
+
+```javascript
+{
+  "name": "adviser-posts",
+  "version": "1.0.0",
+  "display": "true",
+  "sections": {
+    "title": "How it works",
+    "description": "Manual coming soon",
+    "changelog": "Please see the video: <a href='#'>link</a>"
+  }
+}
+```
