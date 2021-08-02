@@ -1,6 +1,6 @@
 # wppanel adviser
 
-
+![admin-demo-preview](https://75.wp.manu.team/wp-content/uploads/2021/08/wp-admin-adviser-preview.png)
 
 You need to create a **setup.json** in root directory.
 
