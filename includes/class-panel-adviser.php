@@ -6,6 +6,8 @@ class Panel_adviser
 
     private array $configParams;
     private array $manualParams;
+    private string $role_slug = 'demo_member';
+    private string $role_name = 'Demo Member';
 
     function __construct()
     {
@@ -70,21 +72,33 @@ class Panel_adviser
     public function adminInit()
     {
         $this->loadConfig();
+        $userID = get_current_user_id();
+
+        if (!$this->checkRoleExist($this->role_slug)) {
+            add_role(
+                $this->role_slug,
+                $this->role_name,
+                $this->getRoleCapabilities()
+            );
+        }
 
         if (empty($this->configParams)) {
             return false;
         }
-        if (isset($GLOBALS['menu'])) {
-            foreach ($GLOBALS['menu'] as $value) {
-                if (!in_array($value[2], $this->getConfigExclude())) {
-                    remove_menu_page($value[2]);
+
+        if ($this->userInRole($userID, $this->role_slug)) {
+            if (isset($GLOBALS['menu'])) {
+                foreach ($GLOBALS['menu'] as $value) {
+                    if (!in_array($value[2], $this->getConfigExclude())) {
+                        remove_menu_page($value[2]);
+                    }
                 }
             }
-        }
 
-        if (!empty($this->getConfigInclude())) {
-            foreach ($this->getConfigInclude() as $value) {
-                add_menu_page($value[0], $value[1], 'read', $value[2], '', 'dashicons-paperclip', 1);
+            if (!empty($this->getConfigInclude())) {
+                foreach ($this->getConfigInclude() as $value) {
+                    add_menu_page($value[0], $value[1], 'read', $value[2], '', 'dashicons-paperclip', 1);
+                }
             }
         }
 
@@ -147,6 +161,49 @@ class Panel_adviser
     public function enqueueAssets()
     {
         wp_enqueue_style( WPADW_DOMAIN . '-admin-style', WPADW_URL . '/assets/style.css' );
+    }
+
+    /**
+     * @param $role
+     * @return bool
+     */
+    public function checkRoleExist($role)
+    {
+        return wp_roles()->is_role($role);
+    }
+
+    /**
+     * @param $user_id
+     * @return array
+     */
+    public function getUserRolesByUserId( $user_id ) {
+        $user = get_userdata( $user_id );
+        return empty( $user ) ? array() : $user->roles;
+    }
+
+    /**
+     * @param $user_id
+     * @param $role
+     * @return bool
+     */
+    public function userInRole( $user_id, $role ) {
+        return in_array( $role, $this->getUserRolesByUserId( $user_id ) );
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoleCapabilities()
+    {
+        return [
+            'read' => true,
+            'manage_options' => true,
+            'edit_posts' => true,
+            'edit_others_posts' => true,
+            'edit_published_posts' => true,
+            'upload_files' => true,
+            'delete_posts' => false
+        ];
     }
 
 }
